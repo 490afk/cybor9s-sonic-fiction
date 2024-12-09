@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybor9s</title>
+    <style>
+        @font-face {
+            font-family: "Over There";
+            src: url("/path/to/Over_There.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Alagarf";
+            src: url("/path/to/alagard.ttf") format("truetype");
+        }
+        @font-face {
+            font-family: "Metropolitan";
+            src: url("/Users/nikonino/Desktop/untitled folder/Metropolitan.ttf") format("truetype");
+        }
+
+        body {
+            background-color: black; 
+            color: white;  
+            font-family: 'Alagard'; 
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            min-height: 100vh; 
+            overflow-y: auto; 
+            background: url('fg.jpg') no-repeat center center scroll; 
+            background-size: cover; 
+        }
+
+        /* First tiling background layer */
+        #background-tiling {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3; /* Place it behind other layers */
+            background: url('ascii-art.png') repeat; /* Path to your tile image */
+            filter: invert(1); /* Optional: Invert colors */
+            opacity: 0.5; /* Optional: make it a bit transparent */
+        }
+
+        /* Second tiling background layer */
+        #background-tiling-second {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2; /* Place this one above the first background layer */
+            background: url('arca symbol.png') repeat; /* Same tile image */
+            filter: invert(1); /* Optional: Invert colors */
+            opacity: 0.5; /* Optional: make it transparent */
+        }
+
+        h1 {
+            font-family: "Metropolitan"; 
+            font-size: 5em;
+            color: whitesmoke; 
+            background-image: url('fg.jpg'); 
+            background-clip: text; 
+            -webkit-background-clip: text; 
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgb(118, 23, 23);
+        }
+
+        #game-container {
+            font-size: 1.5em;
+            line-height: 1.8;
+            margin-top: 50px; /* Add spacing below the title */
+        }
+
+        .choice-link {
+            font-family: "Alagard"; 
+            color: white;
+            text-decoration: silver;
+            font-size: 25px;
+            display: block;
+            margin: 10px 0;
+        }
+
+        .choice-link:hover {
+            color: white; 
+        }
+
+        #ascii-background {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) rotate(90deg); 
+            transform-origin: center; 
+            width: 100%;
+            height: 100%;
+            z-index: -1; 
+            background: url('fg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            opacity: 1; 
+            transition: background-position 1s ease-out;
+        }
+
+        /* Drop shadow effect for text */
+        p, .choice-link {
+            text-shadow: 2px 2px 4px rgb(118, 23, 23); 
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- First tiling background layer -->
+    <div id="background-tiling"></div>
+
+    <!-- Second tiling background layer -->
+    <div id="background-tiling-second"></div>
+
+    <!-- ASCII art background -->
+    <div id="ascii-background"></div>
+
+    <!-- Game Title -->
+    <h1>Cybor9s</h1>
+
+    <!-- Game Content -->
+    <div id="game-container">
+        <!-- Initial Game Text -->
+        <p id="game-text">You awaken in a dark, futuristic city. You have two options.</p>
+        
+        <!-- Choice Links (they'll be dynamically added here) -->
+    </div>
+
+    <script>
+        // Game story structure (short example)
+        const story = {
+            "start": {
+                "text": "You awaken in a dark, futuristic city. You have two options.",
+                "choices": [
+                    {
+                        "text": "Go left towards the glowing lights.",
+                        "next": "left"
+                    },
+                    {
+                        "text": "Go right into the dark alley.",
+                        "next": "right"
+                    }
+                ]
+            },
+            "left": {
+                "text": "You see a strange figure standing by a glowing door. Do you approach?",
+                "choices": [
+                    {
+                        "text": "Approach the figure.",
+                        "next": "approach_figure"
+                    },
+                    {
+                        "text": "Ignore the figure and explore further.",
+                        "next": "explore"
+                    }
+                ]
+            },
+            "right": {
+                "text": "The alley is dark and silent, but you hear footsteps. Do you investigate?",
+                "choices": [
+                    {
+                        "text": "Investigate the noise.",
+                        "next": "investigate"
+                    },
+                    {
+                        "text": "Turn back and go left.",
+                        "next": "left"
+                    }
+                ]
+            },
+            "approach_figure": {
+                "text": "The figure turns around. It's a robot. It speaks to you: 'I am here to help you.' Do you trust it?",
+                "choices": [
+                    {
+                        "text": "Trust the robot.",
+                        "next": "trust_robot"
+                    },
+                    {
+                        "text": "Refuse help.",
+                        "next": "refuse_help"
+                    }
+                ]
+            },
+            "investigate": {
+                "text": "You find a hidden door behind a pile of trash. Do you enter?",
+                "choices": [
+                    {
+                        "text": "Enter the door.",
+                        "next": "enter_door"
+                    },
+                    {
+                        "text": "Walk away.",
+                        "next": "walk_away"
+                    }
+                ]
+            },
+            "trust_robot": {
+                "text": "The robot leads you to safety. You win!",
+                "choices": []
+            },
+            "refuse_help": {
+                "text": "The robot attacks you. You lose.",
+                "choices": []
+            },
+            "enter_door": {
+                "text": "Inside the door, you find a treasure chest. Do you open it?",
+                "choices": [
+                    {
+                        "text": "Open the chest.",
+                        "next": "open_chest"
+                    },
+                    {
+                        "text": "Leave it alone.",
+                        "next": "leave_chest"
+                    }
+                ]
+            },
+            "walk_away": {
+                "text": "You walk away and disappear into the night. Game over.",
+                "choices": []
+            }
+        };
+
+        // Function to load the current story state
+        function loadStory(location) {
+            const storyData = story[location];
+
+            // Update the game text
+            document.getElementById('game-text').innerText = storyData.text;
+
+            // Get the game container to update
+            const gameContainer = document.getElementById('game-container');
+
+            // Clear previous choices
+            const choicesContainer = document.createElement('div');
+
+            // Add new choices as clickable links (limit to 2)
+            storyData.choices.slice(0, 2).forEach((choice) => {
+                const choiceLink = document.createElement('a');
+                choiceLink.href = "#" + choice.next; // Use the next key as the anchor
+                choiceLink.classList.add('choice-link');
+                choiceLink.textContent = choice.text;
+
+                // Listen for click event to update the game state
+                choiceLink.onclick = function(e) {
+                    e.preventDefault();  // Prevent the page from refreshing
+                    loadStory(choice.next); // Load next part of the story
+                };
+
+                choicesContainer.appendChild(choiceLink);
+            });
+
+            // Clear any existing choices before appending new ones
+            const existingChoices = gameContainer.querySelector('div');
+            if (existingChoices) {
+                existingChoices.remove();
+            }
+
+            // Append the new choices to the game container
+            gameContainer.appendChild(choicesContainer);
+        }
+
+        // Initialize the game on page load
+        if (window.location.hash) {
+            const currentLocation = window.location.hash.substring(1); // Get the hash from the URL
+            loadStory(currentLocation);
+        } else {
+            loadStory('start'); // Default to the starting point
+        }
+
+    </script>
+</body>
+</html>
+
